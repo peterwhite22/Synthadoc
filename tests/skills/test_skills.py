@@ -164,8 +164,8 @@ def test_local_file_not_subclassing_baseskill_is_skipped(tmp_path, caplog):
 @pytest.mark.asyncio
 async def test_pdf_skill_cjk_fallback(tmp_path, monkeypatch):
     """PdfSkill falls back to pdfminer when pypdf yields too little text."""
-    from synthadoc.skills.pdf import PdfSkill
-    import synthadoc.skills.pdf as pdf_mod
+    from synthadoc.skills.pdf.scripts.main import PdfSkill
+    import synthadoc.skills.pdf.scripts.main as pdf_mod
 
     # Simulate pypdf returning nearly nothing (typical CJK font failure)
     def fake_pypdf(self, source):
@@ -188,7 +188,7 @@ async def test_pdf_skill_cjk_fallback(tmp_path, monkeypatch):
 @pytest.mark.asyncio
 async def test_pdf_skill_no_fallback_when_pypdf_succeeds(tmp_path, monkeypatch):
     """PdfSkill does NOT call pdfminer when pypdf returns enough text."""
-    from synthadoc.skills.pdf import PdfSkill
+    from synthadoc.skills.pdf.scripts.main import PdfSkill
 
     def fake_pypdf(self, source):
         return ("A" * 500, 3)  # well above threshold

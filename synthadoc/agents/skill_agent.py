@@ -24,7 +24,7 @@ class SkillAgent:
             self._load_local_dir(Path(d))
 
     def _load_builtins(self) -> None:
-        from synthadoc.skills.pdf import PdfSkill
+        from synthadoc.skills.pdf.scripts.main import PdfSkill
         from synthadoc.skills.url import UrlSkill
         from synthadoc.skills.markdown import MarkdownSkill
         from synthadoc.skills.docx import DocxSkill
