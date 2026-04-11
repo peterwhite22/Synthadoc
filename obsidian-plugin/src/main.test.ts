@@ -69,6 +69,41 @@ describe("SynthadocPlugin.onload", () => {
     });
 });
 
+describe("SynthadocPlugin ribbon icon", () => {
+    it("shows online status and page count when server is running", async () => {
+        const { api } = await import("./api");
+        const { Notice } = await import("obsidian");
+        (api.health as any).mockResolvedValueOnce({ status: "ok" });
+        (api.status as any).mockResolvedValueOnce({ pages: 12 });
+
+        const { default: SynthadocPlugin } = await import("./main");
+        const plugin = new SynthadocPlugin();
+        await plugin.onload();
+
+        const ribbonCallback = (plugin.addRibbonIcon as any).mock.calls[0][2];
+        await ribbonCallback();
+
+        expect(Notice).toHaveBeenCalledWith(expect.stringMatching(/✅ online/));
+        expect(Notice).toHaveBeenCalledWith(expect.stringMatching(/12 pages/));
+    });
+
+    it("shows offline status when server is not running", async () => {
+        const { api } = await import("./api");
+        const { Notice } = await import("obsidian");
+        (api.health as any).mockRejectedValueOnce(new Error("refused"));
+        (api.status as any).mockRejectedValueOnce(new Error("refused"));
+
+        const { default: SynthadocPlugin } = await import("./main");
+        const plugin = new SynthadocPlugin();
+        await plugin.onload();
+
+        const ribbonCallback = (plugin.addRibbonIcon as any).mock.calls[0][2];
+        await ribbonCallback();
+
+        expect(Notice).toHaveBeenCalledWith(expect.stringMatching(/❌ offline/));
+    });
+});
+
 describe("SynthadocPlugin.ingestFile", () => {
     it("calls api.ingest with file path and shows Notice with job_id", async () => {
         const { api } = await import("./api");

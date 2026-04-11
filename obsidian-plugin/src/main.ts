@@ -80,10 +80,16 @@ export default class SynthadocPlugin extends Plugin {
         });
 
         this.addRibbonIcon("book-open", "Synthadoc status", async () => {
-            try {
-                const s = await api.status() as any;
-                new Notice(`Synthadoc: ${s.pages} pages`);
-            } catch { new Notice("Synthadoc: server not running"); }
+            const [healthRes, statusRes] = await Promise.allSettled([
+                api.health(),
+                api.status(),
+            ]);
+            const online = healthRes.status === "fulfilled";
+            const engineLabel = online ? "✅ online" : "❌ offline — run 'synthadoc serve'";
+            const pages = statusRes.status === "fulfilled"
+                ? ` · ${(statusRes.value as any).pages} pages`
+                : "";
+            new Notice(`Synthadoc: ${engineLabel}${pages}`);
         });
     }
 
