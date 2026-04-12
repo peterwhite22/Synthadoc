@@ -46,7 +46,13 @@ def test_bm25_search_benchmark(benchmark, tmp_wiki):
 
 @pytest.mark.asyncio
 async def test_cache_hit_makes_zero_llm_calls(tmp_wiki):
-    """Second identical ingest (force=True) must make 0 provider.complete() calls."""
+    """Second identical ingest (force=True) must make 0 analysis/decision LLM calls.
+
+    _update_overview() is excluded from this count — it always runs after a write
+    and is tested separately. We patch it out so this test focuses purely on the
+    analysis + decision cache behaviour.
+    """
+    from unittest.mock import patch
     from synthadoc.agents.ingest_agent import IngestAgent
     from synthadoc.storage.wiki import WikiStorage
     from synthadoc.storage.search import HybridSearch
@@ -80,12 +86,16 @@ async def test_cache_hit_makes_zero_llm_calls(tmp_wiki):
                         log_writer=log, audit_db=audit, cache=cache, max_pages=15,
                         wiki_root=tmp_wiki)
 
-    await agent.ingest(str(source))
-    first_count = call_count
-    call_count = 0
+    # Patch _update_overview so it doesn't consume LLM calls in this test
+    async def _noop_overview(self):
+        pass
 
-    await agent.ingest(str(source), force=True)
-    second_count = call_count
+    with patch.object(IngestAgent, "_update_overview", _noop_overview):
+        await agent.ingest(str(source))
+        first_count = call_count
+        call_count = 0
+        await agent.ingest(str(source), force=True)
+        second_count = call_count
 
     assert first_count > 0, "First ingest should have called LLM"
     assert second_count == 0, f"Cache hit should make 0 LLM calls, made {second_count}"
