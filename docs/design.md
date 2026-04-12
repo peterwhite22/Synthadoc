@@ -921,21 +921,6 @@ The HTTP server always passes `auto_confirm=True` (no interactive terminal avail
 **File:** `synthadoc/core/queue.py`  
 **Storage:** `<wiki-root>/.synthadoc/jobs.db` (SQLite)
 
-### Schema
-
-```sql
-CREATE TABLE jobs (
-    id          TEXT PRIMARY KEY,
-    operation   TEXT NOT NULL,      -- 'ingest' | 'lint' | 'query'
-    status      TEXT NOT NULL,      -- 'pending' | 'in_progress' | 'completed' | 'failed' | 'dead'
-    payload     TEXT,               -- JSON: operation-specific input
-    result      TEXT,               -- JSON: operation-specific output
-    error       TEXT,               -- error message + traceback on failure
-    retries     INTEGER DEFAULT 0,
-    created_at  TEXT NOT NULL       -- UTC ISO-8601
-);
-```
-
 ### State transitions
 
 ```
