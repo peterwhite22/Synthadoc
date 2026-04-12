@@ -129,9 +129,6 @@ The filename without extension, derived from the page title. ASCII-safe and CJK-
 
 ![Synthadoc Architecture](architecture.png)
 
-> Diagram source: `docs/architecture.drawio` (draw.io, not tracked in git).
-> To update: open in [draw.io](https://app.diagrams.net), edit, export as PNG to `docs/architecture.png`, commit the PNG.
-
 ### Request lifecycle (ingest via CLI)
 
 1. `synthadoc ingest report.pdf -w my-wiki`
