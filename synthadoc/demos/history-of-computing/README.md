@@ -140,7 +140,7 @@ synthadoc lint report -w history-of-computing
 **Your decision — three options:**
 
 1. **Link it** — open a related page (e.g. `artificial-intelligence-history.md`) and add
-   `[[quantum-computing]]` in a relevant sentence. The page is no longer an orphan.
+   `\[\[quantum-computing\]\]` in a relevant sentence. The page is no longer an orphan.
 
 2. **Add to index** — open `wiki/index.md` and add it under an appropriate category,
    e.g. `## Platforms and AI`.
