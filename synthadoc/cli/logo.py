@@ -5,7 +5,6 @@ from __future__ import annotations
 
 import os
 import sys
-from pathlib import Path
 
 # ──────────────────────────────────────────────
 #  ASCII art — open book inside a circular badge
@@ -31,6 +30,8 @@ _NAME = r"""
   |   Domain-agnostic LLM wiki engine          |
   +--------------------------------------------+
 """
+
+from synthadoc import __version__ as _VERSION
 
 _REPO_URL = "https://github.com/Axoviq-ai/synthadoc"
 
@@ -62,7 +63,7 @@ def _c(code: str, text: str, use_color: bool) -> str:
 def print_banner(
     port: int,
     wiki: str,
-    version: str = "0.1.0",
+    version: str = _VERSION,
     mode: str = "HTTP + MCP",
 ) -> None:
     """Print the startup banner to stdout."""
@@ -96,7 +97,7 @@ def print_banner(
     print()
 
 
-def banner_text(version: str = "0.1.0") -> str:
+def banner_text(version: str = _VERSION) -> str:
     """Return the plain-text banner (no ANSI) for README / web index."""
     logo_lines = _LOGO.strip("\n").splitlines()
     name_lines = _NAME.strip("\n").splitlines()

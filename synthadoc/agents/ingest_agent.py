@@ -223,8 +223,8 @@ class IngestAgent:
             meta = self._skill_agent.detect_skill(source)
             if any(intent in s for intent in meta.triggers.intents):
                 return False
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug("Skill detection failed for %r: %s", source, exc)
         return True
 
     async def ingest(self, source: str, force: bool = False, bust_cache: bool = False) -> IngestResult:

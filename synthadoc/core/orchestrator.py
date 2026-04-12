@@ -58,6 +58,8 @@ class Orchestrator:
 
     async def _run_ingest(self, job_id: str, source: str, auto_confirm: bool,
                           force: bool = False) -> None:
+        # auto_confirm is reserved for when cost gate is wired to the ingest flow (v0.2+).
+        # Cost tracking returns $0.0000 in v0.1, so cost_guard.check() is not called here yet.
         from synthadoc.agents.ingest_agent import IngestAgent
         try:
             agent = IngestAgent(
