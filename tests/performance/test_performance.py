@@ -101,6 +101,36 @@ async def test_cache_hit_makes_zero_llm_calls(tmp_wiki):
     assert second_count == 0, f"Cache hit should make 0 LLM calls, made {second_count}"
 
 
+@pytest.mark.asyncio
+async def test_web_search_fanout_enqueue_is_fast(tmp_wiki):
+    """Enqueueing 20 web search child jobs must complete in < 5 seconds.
+
+    Simulates a full web search fan-out: WebSearchSkill returns 20 URLs,
+    IngestAgent returns them as child_sources, Orchestrator enqueues each.
+    The queue is SQLite-backed; all 20 enqueues should finish well under 5s.
+    """
+    from synthadoc.core.queue import JobQueue
+
+    sd = tmp_wiki / ".synthadoc"
+    sd.mkdir(parents=True, exist_ok=True)
+    queue = JobQueue(sd / "jobs.db", max_retries=3)
+    await queue.init()
+
+    child_sources = [f"https://example.com/page-{i}" for i in range(20)]
+
+    start = time.perf_counter()
+    for url in child_sources:
+        await queue.enqueue("ingest", {"source": url, "force": False})
+    elapsed = time.perf_counter() - start
+
+    assert elapsed < 5.0, f"Enqueueing 20 child jobs took {elapsed:.2f}s — exceeds 5s SLO"
+
+    # Verify all jobs were queued
+    from synthadoc.core.queue import JobStatus
+    jobs = await queue.list_jobs(status=JobStatus.PENDING)
+    assert len(jobs) == 20, f"Expected 20 queued jobs, got {len(jobs)}"
+
+
 def test_health_endpoint_under_10ms(tmp_wiki):
     """GET /health must respond in < 10 ms."""
     from fastapi.testclient import TestClient
