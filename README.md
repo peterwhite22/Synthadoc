@@ -209,28 +209,77 @@ For full architecture details, data models, API reference, and plugin developmen
 
 ### Prerequisites
 
-- Python 3.11+
-- An LLM API key — **Gemini Flash is free** (15 RPM / 1M tokens/day, no credit card): [aistudio.google.com/app/apikey](https://aistudio.google.com/app/apikey). Alternatively: [Anthropic](https://console.anthropic.com/), [OpenAI](https://platform.openai.com/api-keys), [Groq](https://console.groq.com/keys) (free tier), or local [Ollama](https://ollama.com) (no key needed).
+| Requirement | Version | Notes |
+|-------------|---------|-------|
+| Python | 3.11+ | |
+| Node.js | 18+ | Obsidian plugin build only |
+| Git | any | |
+| LLM API key | — | At least one required (see below) |
+| Tavily API key | — | Optional — web search feature only |
 
-### Install Synthadoc
+**LLM API key — at least one required:**
+
+| Provider | Free tier | Get key |
+|----------|-----------|---------|
+| **Gemini Flash** | Yes — 15 RPM / 1M tokens/day, no credit card | [aistudio.google.com](https://aistudio.google.com/app/apikey) |
+| Groq | Yes — rate-limited | [console.groq.com](https://console.groq.com/keys) |
+| Ollama | Yes — runs locally, no key | [ollama.com](https://ollama.com) |
+| Anthropic | No | [console.anthropic.com](https://console.anthropic.com/) |
+| OpenAI | No | [platform.openai.com](https://platform.openai.com/api-keys) |
+
+**Tavily API key (optional — enables web search):**
+Get a free key at [tavily.com](https://tavily.com). Without it, web search jobs will fail but all other features work normally.
+
+---
+
+### Step 1 — Clone and install
 
 ```bash
-pip install synthadoc
+git clone https://github.com/paulmchen/synthadoc.git
+cd synthadoc
+pip install -e ".[dev]"
 ```
 
-### Set your API key
+### Step 2 — Run the Python test suite
+
+Validate that the Python engine builds and all tests pass before proceeding:
 
 ```bash
-# macOS / Linux
-export ANTHROPIC_API_KEY=sk-ant-…
-
-# Windows (PowerShell)
-$env:ANTHROPIC_API_KEY = "sk-ant-…"
+pytest --ignore=tests/performance/ -q
 ```
 
-To persist the key, add the export to your shell profile (`~/.bashrc`, `~/.zshrc`, or Windows user environment variables).
+Expected: all tests pass, 0 failures. If any fail, check the error output before continuing.
 
-### Verify
+Performance benchmarks (optional — Linux/macOS, measures SLOs):
+
+```bash
+pytest tests/performance/ -v --benchmark-disable
+```
+
+### Step 3 — Build and test the Obsidian plugin
+
+```bash
+cd obsidian-plugin
+npm install
+npm run build    # produces main.js
+npm test         # runs Vitest unit tests
+cd ..
+```
+
+### Step 4 — Set your API keys
+
+```bash
+# macOS / Linux — add to ~/.bashrc or ~/.zshrc to persist
+export GEMINI_API_KEY=AIza…          # free tier — recommended starting point
+export ANTHROPIC_API_KEY=sk-ant-…    # if using Anthropic
+export TAVILY_API_KEY=tvly-…         # optional — web search only
+
+# Windows (PowerShell) — add to your profile to persist
+$env:GEMINI_API_KEY = "AIza…"
+$env:TAVILY_API_KEY = "tvly-…"
+```
+
+### Step 5 — Verify
 
 ```bash
 synthadoc --version
@@ -303,26 +352,6 @@ on_ingest_complete = "python hooks/auto_commit.py"
 ```
 
 Full config reference: [docs/design.md — Configuration](docs/design.md#configuration).
-
----
-
-## Running Tests
-
-```bash
-# Install dev dependencies
-pip install -e ".[dev]"
-
-# Run all tests
-pytest
-
-# With coverage report
-pytest --cov=synthadoc --cov-report=term-missing
-
-# Run a specific test module
-pytest tests/core/test_logging_config.py -v
-```
-
-The test suite covers: config loading, job queue, orchestrator, cost guard, cache, hooks, scheduler, HTTP API, MCP server, all agents, all skills, storage, search, CLI commands, and security/performance benchmarks.
 
 ---
 
