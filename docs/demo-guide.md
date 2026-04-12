@@ -368,6 +368,8 @@ see how the engine mapped slide content to wiki pages:
 synthadoc audit history -w history-of-computing
 ```
 
+![synthadoc audit history output](synthadoc-audit-history.png)
+
 Expected pages touched or created:
 
 | Wiki page | What changed |
@@ -644,15 +646,7 @@ The `synthadoc audit` commands query the append-only `audit.db` without needing 
 synthadoc audit history -w history-of-computing
 ```
 
-Expected output:
-```
-Source                                    Pages created  Pages updated  Tokens   Cost
-----------------------------------------  -------------  -------------  -------  ------
-raw_sources/turing-enigma-decryption.pdf  alan-turing                   4820     $0.031
-raw_sources/computing-pioneers-timeline…  ibm-history    alan-turing    6210     $0.040
-raw_sources/first-compiler-controversy…               grace-hopper     3950     $0.025
-raw_sources/quantum-computing-primer.p…  quantum-computing              5100     $0.033
-```
+![synthadoc audit history output](synthadoc-audit-history.png)
 
 **Cost summary** — token spend for the last 30 days:
 
