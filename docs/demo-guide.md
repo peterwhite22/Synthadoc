@@ -196,7 +196,7 @@ Open `<wiki-root>/.synthadoc/config.toml` (create it if absent) and add:
 default = { provider = "gemini", model = "gemini-2.0-flash" }
 ```
 
-Restart `synthadoc serve` after changing the config.
+If `synthadoc serve` is already running, restart it after changing the config.
 
 #### Switching providers mid-demo
 
