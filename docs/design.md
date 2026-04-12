@@ -741,8 +741,8 @@ cron = "0 3 * * 0"
 | `queue.max_parallel_ingest` | int | `4` | Max concurrent ingest agents |
 | `queue.max_retries` | int | `3` | Retries before job → dead |
 | `queue.backoff_base_seconds` | int | `5` | Exponential backoff base (±20% jitter) |
-| `cost.soft_warn_usd` | float | `0.50` | Log warning, continue |
-| `cost.hard_gate_usd` | float | `2.00` | Require explicit confirmation |
+| `cost.soft_warn_usd` | float | `0.50` | Log warning, continue _(inactive in v0.1 — see note below)_ |
+| `cost.hard_gate_usd` | float | `2.00` | Require explicit confirmation _(inactive in v0.1 — see note below)_ |
 | `cost.auto_resolve_confidence_threshold` | float | `0.85` | Auto-apply lint resolutions above this score |
 | `ingest.max_pages_per_ingest` | int | `15` | Max pages one ingest may update |
 | `ingest.chunk_size` | int | `1500` | Text chunk size (characters) |
@@ -881,6 +881,8 @@ Enforces per-operation budget limits. Evaluated before every LLM call.
 |-----------|---------|-----------|
 | `soft_warn_usd` | $0.50 | Log warning; auto-continue |
 | `hard_gate_usd` | $2.00 | Prompt user `Proceed? [y/N]`; block if N; skip prompt if `auto_confirm=True` or `--yes` flag |
+
+> **v0.1 note — cost thresholds are inactive.** Token counts are tracked accurately and stored in `audit.db`, but `cost_usd` is always `$0.0000` because no per-model pricing table is implemented yet. As a result, `soft_warn_usd` and `hard_gate_usd` never trigger. `auto_resolve_confidence_threshold` is unaffected — it uses LLM confidence scores, not cost. Per-model pricing and active cost gating are planned for v0.2.
 
 ### API
 
