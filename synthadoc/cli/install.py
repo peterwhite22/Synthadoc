@@ -97,25 +97,26 @@ def install_cmd(
     """
     dest = (Path(target) / name).resolve()
 
+    # Registry check first — same name cannot be installed twice regardless of --target path
+    registry = _read_registry()
+    if name in registry:
+        entry = registry[name]
+        kind = f"demo ({entry['demo']})" if entry.get("demo") else "wiki"
+        E.cli_error(
+            E.WIKI_ALREADY_EXISTS,
+            f"'{name}' is already installed as a {kind} at {entry['path']}.",
+            f"To reinstall: synthadoc uninstall {name}  then install again.",
+        )
+
     if dest.exists():
-        registry = _read_registry()
-        if name in registry:
-            entry = registry[name]
-            kind = f"demo ({entry['demo']})" if entry.get("demo") else "wiki"
-            E.cli_error(
-                E.WIKI_ALREADY_EXISTS,
-                f"'{name}' is already installed as a {kind} at {dest}.",
-                f"To reinstall: synthadoc uninstall {name}  then install again.",
-            )
-        else:
-            E.cli_error(
-                E.WIKI_ALREADY_EXISTS,
-                f"'{name}' already exists at {dest} but is not tracked by synthadoc.",
-                f"It may be a leftover from a previous install. To remove it:\n"
-                f"  rm -rf \"{dest}\"    # Linux / macOS\n"
-                f"  Remove-Item -Recurse -Force \"{dest}\"    # Windows PowerShell\n"
-                f"Then run install again.",
-            )
+        E.cli_error(
+            E.WIKI_ALREADY_EXISTS,
+            f"'{name}' already exists at {dest} but is not tracked by synthadoc.",
+            f"It may be a leftover from a previous install. To remove it:\n"
+            f"  rm -rf \"{dest}\"    # Linux / macOS\n"
+            f"  Remove-Item -Recurse -Force \"{dest}\"    # Windows PowerShell\n"
+            f"Then run install again.",
+        )
 
     # ── Port resolution ────────────────────────────────────────────────────────
     if port is not None:

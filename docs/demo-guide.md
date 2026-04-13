@@ -188,18 +188,30 @@ until Obsidian is restarted.
 In **Graph view** (`Ctrl/Cmd+G`) you should see 10 interconnected nodes. The `index` and
 `dashboard` nodes connect to everything; topic pages cluster by cross-links.
 
-The server is already running on `http://127.0.0.1:7070`. If you see a connection error
-in the plugin, verify with:
+The server should already be running from README Step 6. If the Obsidian plugin shows a
+connection error, check the server is up:
 
 ```
-synthadoc serve -w history-of-computing
+synthadoc status -w history-of-computing
+```
+
+or probe the health endpoint directly:
+
+```
+curl http://127.0.0.1:7070/health
+```
+
+If neither responds, start the server:
+
+```
+synthadoc serve -w history-of-computing --background
 ```
 
 ![synthadoc serve startup](synthadoc-serve.png)
 
 The banner confirms the port, wiki path, and PID. If you see
 `Warning: TAVILY_API_KEY is not set`, web search jobs will not work — see
-[Appendix — Tavily web search key](#tavily-web-search-key) if you plan to use Step 9.
+[Appendix — Tavily web search key](#appendix--tavily-web-search-key) if you plan to use Step 9.
 
 > **Obsidian ribbon:** The ribbon is the narrow vertical icon strip on the far left edge of
 > the Obsidian window. Once the Synthadoc plugin is enabled, the Synthadoc book icon
