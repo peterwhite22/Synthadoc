@@ -305,9 +305,13 @@ The guide covers:
 Once you've walked through the demo, creating a wiki for your own domain takes two commands:
 
 ```bash
-synthadoc install my-wiki --target ~/wikis --domain "Market conditions and trends in Canada"
-synthadoc serve -w my-wiki
+# "market-condition-canada" is the wiki name (used in all -w commands)
+# "Market conditions and trends in Canada" is the subject domain the wiki will manage
+synthadoc install market-condition-canada --target ~/wikis --domain "Market conditions and trends in Canada"
+synthadoc serve -w market-condition-canada
 ```
+
+`--target` is the parent folder where the wiki directory will be created. `--domain` is a free-text description of the subject area — the LLM uses it to tailor the scaffold content to your domain.
 
 `install` creates the folder structure and, if an API key is set, runs a one-time LLM scaffold that generates four domain-aware starter files:
 
@@ -323,10 +327,10 @@ These files are the wiki's "self-knowledge" — Synthadoc reads them on every in
 **Scaffold can be re-run at any time** as your domain evolves. Pages already linked in `index.md` are protected and never overwritten:
 
 ```bash
-synthadoc scaffold -w my-wiki
+synthadoc scaffold -w market-condition-canada
 ```
 
-From this point the workflow is the same as the demo: drop source files into `raw_sources/`, run `synthadoc ingest --batch raw_sources/ -w my-wiki`, query, lint, and let the wiki grow.
+From this point the workflow is the same as the demo: drop source files into `raw_sources/`, run `synthadoc ingest --batch raw_sources/ -w market-condition-canada`, query, lint, and let the wiki grow.
 
 See [docs/design.md](docs/design.md) for a full description of how ingest, contradiction detection, and orphan tracking work under the hood.
 
