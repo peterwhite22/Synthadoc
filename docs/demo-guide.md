@@ -101,7 +101,7 @@ If any of these are missing, complete [README Steps 4–6](../README.md#step-4--
 > **No API key needed to browse.** The 10 pre-built pages are already in the wiki — you
 > can open them in Obsidian and explore Graph view without any key. An API key is only
 > required when you ingest new sources or run lint. Web search (Step 9) additionally
-> requires `TAVILY_API_KEY`.
+> requires `TAVILY_API_KEY` — see [Appendix — Tavily web search key](#appendix--tavily-web-search-key).
 >
 > Want to use a different LLM provider (e.g. free-tier Gemini Flash)? See
 > [Appendix — Switching LLM providers](#appendix--switching-llm-providers) at the bottom
