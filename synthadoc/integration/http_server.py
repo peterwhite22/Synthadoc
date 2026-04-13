@@ -215,7 +215,7 @@ def create_app(wiki_root: Path, max_body_bytes: int = _MAX_BODY_BYTES) -> FastAP
     @app.get("/lint/report")
     async def lint_report():
         import yaml as _yaml
-        _SKIP = {"index", "log", "dashboard"}
+        _SKIP = {"index", "log", "dashboard", "purpose"}
         wiki_dir = wiki_root / "wiki"
         pages = list(wiki_dir.glob("*.md"))
 
