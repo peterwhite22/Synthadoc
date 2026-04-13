@@ -336,7 +336,45 @@ These files are the wiki's "self-knowledge" — Synthadoc reads them on every in
 synthadoc scaffold -w market-condition-canada
 ```
 
-From this point the workflow is the same as the demo: drop source files into `raw_sources/`, run `synthadoc ingest --batch raw_sources/ -w market-condition-canada`, query, lint, and let the wiki grow.
+**Recommended first steps after the plugins are configured and the scaffold files look right:**
+
+**1. Seed the wiki with web searches** — pull in real content for the topics you care about:
+
+```bash
+synthadoc ingest "search for: Economy, employment and labour market analysis and performance in Toronto GTA" -w market-condition-canada
+synthadoc ingest "search for: Bank of Canada interest rate outlook 2025" -w market-condition-canada
+synthadoc ingest "search for: Ontario housing affordability and rental market trends" -w market-condition-canada
+```
+
+Each search fans out into up to 20 URL ingest jobs. Watch them process:
+
+```bash
+synthadoc jobs list -w market-condition-canada
+```
+
+**2. Run lint and query** — once jobs complete, check what was built and whether anything conflicts:
+
+```bash
+synthadoc lint run -w market-condition-canada
+synthadoc lint report -w market-condition-canada
+synthadoc query "What are the current employment trends in the Toronto GTA?" -w market-condition-canada
+```
+
+**3. Re-run scaffold** — now that the wiki has real pages, scaffold can generate a much richer index with categories that reflect actual content:
+
+```bash
+synthadoc scaffold -w market-condition-canada
+```
+
+**4. Set up a daily scheduler** — keep the wiki fresh automatically:
+
+```bash
+# Re-ingest key topics nightly at 2 AM
+synthadoc schedule add --op "ingest" --source "search for: Toronto GTA economic indicators latest" --cron "0 2 * * *" -w market-condition-canada
+
+# Re-run scaffold weekly on Sunday at 4 AM to keep the index current
+synthadoc schedule add --op "scaffold" --cron "0 4 * * 0" -w market-condition-canada
+```
 
 See [docs/design.md](docs/design.md) for a full description of how ingest, contradiction detection, and orphan tracking work under the hood.
 
@@ -481,6 +519,20 @@ synthadoc ingest --file sources.txt -w my-wiki
 
 # Force re-ingest (bypass deduplication and cache)
 synthadoc ingest --force report.pdf -w my-wiki
+
+# Web search — triggers a Tavily search, then ingests each result URL as a child job.
+# Prefix the query with any recognised intent: "search for:", "find on the web:",
+# "look up:", or "web search:"  (prefix is stripped before the search is sent)
+# Requires TAVILY_API_KEY to be set.
+synthadoc ingest "search for: Bank of Canada interest rate decisions 2024" -w my-wiki
+synthadoc ingest "find on the web: unemployment trends Ontario Q1 2025" -w my-wiki
+
+# Multiple web searches at once via a manifest file
+# web-searches.txt:
+#   search for: Bank of Canada interest rate decisions 2024
+#   find on the web: unemployment trends Ontario Q1 2025
+#   look up: Toronto housing market affordability index
+synthadoc ingest --file web-searches.txt -w my-wiki
 ```
 
 ### Querying
