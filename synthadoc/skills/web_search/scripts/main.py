@@ -18,6 +18,7 @@ _DEFAULT_MAX_RESULTS = 20
 # Domains that block automated HTTP clients (Cloudflare, login walls, etc.).
 # URLs from these domains are skipped to prevent dead ingest jobs.
 _BLOCKED_DOMAINS = {
+    # Require JavaScript/login — can't be fetched by a plain HTTP client
     "quora.com",
     "medium.com",
     "reddit.com",
@@ -27,6 +28,12 @@ _BLOCKED_DOMAINS = {
     "x.com",
     "linkedin.com",
     "tiktok.com",
+    # Require institutional/subscription access
+    "ieeexplore.ieee.org",
+    "dl.acm.org",
+    "sciencedirect.com",
+    "springer.com",
+    "jstor.org",
 }
 
 
