@@ -102,19 +102,18 @@ def test_install_unknown_demo_exits_nonzero(tmp_path, monkeypatch):
 
 
 def test_install_output_instructs_parent_dir(tmp_path, monkeypatch):
-    """install output must show the wiki root path and pages/ subfolder separately."""
+    """install output must confirm installation and show the serve command."""
     import synthadoc.cli.install as install_mod
     monkeypatch.setattr(install_mod, "_REGISTRY", tmp_path / "wikis.json")
     monkeypatch.setattr(install_mod, "_find_free_port", lambda start=7070, max_scan=20: 7070)
 
     result = runner.invoke(app, ["install", "my-research", "--target", str(tmp_path)])
-    dest = str(tmp_path / "my-research")
-    # Root path must appear in output
-    assert dest in result.output
-    # Pages line must point to wiki/ subfolder
-    pages_line = next((l for l in result.output.splitlines() if "Pages" in l), "")
-    assert pages_line, f"No 'Pages' line in output: {result.output}"
-    assert "wiki" in pages_line
+    # No absolute paths in output
+    assert str(tmp_path) not in result.output
+    # Must confirm installation by name
+    assert "my-research" in result.output
+    # Must show serve command
+    assert "synthadoc serve -w my-research" in result.output
 
 
 # ---------------------------------------------------------------------------

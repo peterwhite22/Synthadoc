@@ -19,7 +19,7 @@ def server_url(wiki: str) -> str:
     if not config_path.exists():
         E.cli_error(
             E.WIKI_NOT_REGISTERED,
-            f"Wiki '{wiki}' is not installed or not found at '{root}'.",
+            f"Wiki '{wiki}' is not installed.",
             "Run 'synthadoc list' to see installed wikis.",
         )
     cfg = load_config(project_config=config_path)

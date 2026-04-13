@@ -182,10 +182,22 @@ def install_cmd(
     }
     _write_registry(registry)
 
-    typer.echo(f"Wiki '{name}' installed at {dest}")
+    typer.echo(f"Wiki '{name}' installed.")
     typer.echo(f"  Port   {effective_port}")
-    typer.echo(f"  Pages  {dest}/wiki/")
     typer.echo(f"Start:   synthadoc serve -w {name}")
+
+
+@app.command("list")
+def list_cmd():
+    """List all installed wikis."""
+    registry = _read_registry()
+    if not registry:
+        typer.echo("No wikis installed. Run 'synthadoc install' to create one.")
+        return
+    for name, entry in registry.items():
+        demo_tag = f"  [demo]" if entry.get("demo") else ""
+        installed = entry.get("installed", "")
+        typer.echo(f"{name:<30}  installed: {installed}{demo_tag}")
 
 
 @app.command("uninstall")
@@ -212,7 +224,7 @@ def uninstall_cmd(
     dest = Path(registry[name]["path"])
 
     if not dest.exists():
-        typer.echo(f"Registered path {dest} no longer exists — removing from registry.")
+        typer.echo(f"Wiki '{name}' no longer exists on disk — removing from registry.")
         del registry[name]
         _write_registry(registry)
         raise typer.Exit(0)
@@ -232,4 +244,4 @@ def uninstall_cmd(
     shutil.rmtree(dest)
     del registry[name]
     _write_registry(registry)
-    typer.echo(f"Removed {dest}")
+    typer.echo(f"Wiki '{name}' removed.")
