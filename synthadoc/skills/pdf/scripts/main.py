@@ -44,6 +44,8 @@ class PdfSkill(BaseSkill):
                     if t:
                         parts.append(t)
             return "\n".join(parts), num_pages
+        except (FileNotFoundError, IsADirectoryError):
+            raise
         except Exception as exc:
             raise ValueError(
                 f"Cannot read '{source}' as a PDF file: {exc}. "
